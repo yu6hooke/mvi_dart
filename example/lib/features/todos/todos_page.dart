@@ -3,13 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:mvi_dart/mvi_dart.dart';
 
 import '../../app/app_feature.dart';
-import '../../data/todo_repository.dart';
 import '../../di.dart';
 import '../../hooks.dart';
 import '../../shared/remaining_badge.dart';
 import '../detail/detail_page.dart';
 import 'todos_contract.dart';
 import 'todos_feature.dart';
+import 'todos_providers.dart';
 
 class TodosPage extends StatelessWidget {
   const TodosPage({super.key});
@@ -18,7 +18,7 @@ class TodosPage extends StatelessWidget {
   Widget build(BuildContext context) => context.feature<AppFeature>().scope(
     lens: todosLens,
     wrapAction: AppAction.todos,
-    create: (featureContext) => TodosFeature(featureContext, repo: context.read(todoRepositoryProvider)),
+    create: context.read(todosFeatureProvider),
     builder: (context, todos) => TodosView(todos),
   );
 }

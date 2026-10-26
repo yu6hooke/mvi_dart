@@ -57,7 +57,7 @@ final class FeatureTester<S, A, E, F extends Feature<S, A, E>> {
   FeatureTester(
     this._fa,
     S initial,
-    F Function(FeatureContext<S, A> featureContext) create, {
+    FeatureFactory<S, A, F> create, {
     List<SharedKey<Object?>> trackShared = const [],
     bool verifyOnTearDown = true,
   }) : cell = RootCell<S>(initial) {

@@ -29,6 +29,10 @@ final class FeatureContext<S, A> {
   final void Function(A action)? onTaskAction;
 }
 
+/// Builds a feature from the wiring a scope provides. Holding one of these lets the app assemble a feature's
+/// dependencies once, outside the view, and hand the scope only the finished factory.
+typedef FeatureFactory<S, A, F extends Feature<S, A, Object?>> = F Function(FeatureContext<S, A> featureContext);
+
 abstract base class Feature<S, A, E> {
   Feature(FeatureContext<S, A> featureContext)
     : cell = featureContext.cell,

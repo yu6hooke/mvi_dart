@@ -207,6 +207,7 @@ flowchart LR
 - The child does not copy its state. Every read goes through the lens to the root, and every write goes back through `Lens.set`.
 - Scopes nest: call `todos.scope(...)` inside the child for a grandchild.
 - `context.feature<F>()` finds the nearest enclosing feature of type `F`.
+- `create` is a `FeatureFactory`. To keep dependency wiring out of the view, have your DI container provide it (see [Using with hooks and DI](#using-with-hooks-and-di)).
 
 ### 4. Build the view
 
@@ -351,22 +352,31 @@ void useEffects<E>(Feature<Object?, Object?, E> feature, void Function(E effect)
 }
 ```
 
-For dependency injection, pass dependencies into the feature constructor in `create`. With Riverpod as the container:
+For dependency injection, features take their dependencies through the constructor, and the DI container provides a ready-made `FeatureFactory`. The live wiring lives in one place, and the view never names a dependency. With Riverpod as the container:
 
 ```dart
+// Next to the feature, in the DI layer. The feature itself does not import Riverpod.
+final todosFeatureProvider = Provider<FeatureFactory<TodosState, TodosAction, TodosFeature>>(
+  (ref) => (featureContext) => TodosFeature(featureContext, repo: ref.watch(todoRepositoryProvider)),
+);
+
 extension ReadProvider on BuildContext {
   T read<T>(Provider<T> provider) => ProviderScope.containerOf(this, listen: false).read(provider);
 }
 
+// The view only connects parent and child.
 parent.scope(
   lens: todosLens,
   wrapAction: AppAction.todos,
-  create: (featureContext) => TodosFeature(featureContext, repo: context.read(todoRepositoryProvider)),
+  create: context.read(todosFeatureProvider),
   builder: (context, todos) => TodosView(todos),
 );
 ```
 
-Use plain `Provider<T>`, not autoDispose providers. A one-time read does not keep an autoDispose provider alive, so it could be disposed while the feature still uses it.
+- Swap implementations by overriding the dependency's provider, for example `ProviderScope(overrides: [todoRepositoryProvider.overrideWithValue(fake)])`.
+- In `FeatureTester`, skip the container and pass fakes to the constructor directly.
+- A missing dependency is a compile error, because it is a required constructor parameter.
+- Use plain `Provider<T>`, not autoDispose providers. A one-time read does not keep an autoDispose provider alive, so it could be disposed while the feature still uses it.
 
 See [`example/`](example) for a complete app.
 
