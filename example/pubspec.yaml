@@ -1,0 +1,30 @@
+name: mvi_dart_example
+description: "Practical example of mvi_dart with freezed, flutter_hooks and Riverpod (DI only)."
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  mvi_dart:
+    path: ../packages/mvi_dart
+  # Riverpod is used for DI only (plain Provider<T>): no generator, Notifier, or autoDispose.
+  flutter_riverpod: ^3.4.3
+  flutter_hooks: ^0.21.3+1
+  freezed_annotation: ^3.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mvi_dart_test:
+    path: ../packages/mvi_dart_test
+  flutter_lints: ^6.0.0
+  build_runner: ^2.16.2
+  freezed: ^4.0.3
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Read Flutter version from .tool-versions
+        id: flutter-version
+        run: echo "version=$(grep flutter .tool-versions | cut -d' ' -f2 | sed 's/-stable//')" >> $GITHUB_OUTPUT
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ steps.flutter-version.outputs.version }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: |
+          for d in packages/mvi_dart_test packages/mvi_dart example; do
+            (cd $d && flutter pub get)
+          done
+
+      # page_width lives in each package's analysis_options, which needs resolved dependencies
+      - name: Check formatting
+        run: dart format --set-exit-if-changed $(git ls-files '*.dart')
+
+      - name: mvi_dart_test
+        working-directory: packages/mvi_dart_test
+        run: flutter analyze
+
+      - name: mvi_dart
+        working-directory: packages/mvi_dart
+        run: flutter analyze && flutter test
+
+      - name: example
+        working-directory: example
+        run: dart run build_runner build && flutter analyze && flutter test
