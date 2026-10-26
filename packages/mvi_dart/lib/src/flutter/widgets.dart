@@ -10,7 +10,7 @@ import '../core/store.dart';
 class RootStore<S, A, F extends Feature<S, A, Object?>> extends StatefulWidget {
   const RootStore({super.key, required this.initial, required this.create, required this.builder, this.shared});
   final S initial;
-  final F Function(FeatureContext<S, A> ctx) create;
+  final F Function(FeatureContext<S, A> featureContext) create;
   final SharedStore? shared;
   final Widget Function(BuildContext context, F feature) builder;
 
@@ -48,7 +48,7 @@ extension FeatureScopes<S, A> on Feature<S, A, Object?> {
     Key? key,
     required Lens<S, CS> lens,
     required A Function(CA) wrapAction,
-    required F Function(FeatureContext<CS, CA> ctx) create,
+    required F Function(FeatureContext<CS, CA> featureContext) create,
     required Widget Function(BuildContext context, F feature) builder,
   }) => _FeatureScope<S, A, CS, CA, F>(
     key: key,
@@ -72,7 +72,7 @@ class _FeatureScope<PS, PA, S, A, F extends Feature<S, A, Object?>> extends Stat
   final Feature<PS, PA, Object?> parent;
   final Lens<PS, S> lens;
   final PA Function(A) wrapAction;
-  final F Function(FeatureContext<S, A> ctx) create;
+  final F Function(FeatureContext<S, A> featureContext) create;
   final Widget Function(BuildContext context, F feature) builder;
 
   @override

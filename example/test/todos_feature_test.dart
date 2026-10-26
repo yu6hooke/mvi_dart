@@ -10,7 +10,12 @@ FeatureTester<TodosState, TodosAction, TodosEffect, TodosFeature> tester(
   FakeAsync fa,
   FakeTodoRepository repo, {
   TodosState initial = const TodosState(),
-}) => FeatureTester(fa, initial, (ctx) => TodosFeature(ctx, repo: repo), trackShared: [remainingCount]);
+}) => FeatureTester(
+  fa,
+  initial,
+  (featureContext) => TodosFeature(featureContext, repo: repo),
+  trackShared: [remainingCount],
+);
 
 void main() {
   test(

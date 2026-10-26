@@ -53,7 +53,7 @@ final class Increment extends CounterAction {
 }
 
 final class CounterFeature extends Feature<int, CounterAction, Never> {
-  CounterFeature(super.ctx);
+  CounterFeature(super.featureContext);
 
   @override
   void onReceive(CounterAction action) {
@@ -120,7 +120,7 @@ sealed class TodosEffect with _$TodosEffect {
 
 ```dart
 final class TodosFeature extends Feature<TodosState, TodosAction, TodosEffect> {
-  TodosFeature(super.ctx, {required this.repo});
+  TodosFeature(super.featureContext, {required this.repo});
 
   final TodoRepository repo;
 
@@ -170,7 +170,7 @@ sealed class AppAction with _$AppAction {
 final todosLens = Lens<AppState, TodosState>(get: (s) => s.todos, set: (s, t) => s.copyWith(todos: t));
 
 final class AppFeature extends Feature<AppState, AppAction, Never> {
-  AppFeature(super.ctx);
+  AppFeature(super.featureContext);
 
   @override
   void onReceive(AppAction action) {
@@ -192,7 +192,7 @@ class TodosPage extends StatelessWidget {
   Widget build(BuildContext context) => context.feature<AppFeature>().scope(
     lens: todosLens,
     wrapAction: AppAction.todos,
-    create: (ctx) => TodosFeature(ctx, repo: TodoRepository()),
+    create: (featureContext) => TodosFeature(featureContext, repo: TodoRepository()),
     builder: (context, todos) => TodosView(todos),
   );
 }
@@ -303,7 +303,7 @@ Select(context.sharedStore(remainingCount), selector: (v) => v, builder: (_, v) 
 To keep an outside value in sync with your state, use `combineWith` in the constructor. It merges once right away and again on every change.
 
 ```dart
-SummaryFeature(super.ctx) {
+SummaryFeature(super.featureContext) {
   combineWith(shared(remainingCount), (s, v) => s.copyWith(remaining: v));
 }
 ```
@@ -316,7 +316,7 @@ SummaryFeature(super.ctx) {
 import 'package:mvi_dart_test/mvi_dart_test.dart';
 
 test('search waits 300ms', () => fakeAsync((fa) {
-  final h = FeatureTester(fa, const TodosState(), (ctx) => TodosFeature(ctx, repo: FakeRepo()));
+  final h = FeatureTester(fa, const TodosState(), (featureContext) => TodosFeature(featureContext, repo: FakeRepo()));
 
   h.send(const TodosAction.queryChanged('milk'), (s) => s.copyWith(query: 'milk', loading: true));
   h.advance(const Duration(milliseconds: 400));
@@ -361,7 +361,7 @@ extension ReadProvider on BuildContext {
 parent.scope(
   lens: todosLens,
   wrapAction: AppAction.todos,
-  create: (ctx) => TodosFeature(ctx, repo: context.read(todoRepositoryProvider)),
+  create: (featureContext) => TodosFeature(featureContext, repo: context.read(todoRepositoryProvider)),
   builder: (context, todos) => TodosView(todos),
 );
 ```

@@ -149,7 +149,7 @@ final grandLens = Lens<ChildState, GrandState>(
 );
 
 final class ParentFeature extends Feature<ParentState, ParentAction, Never> {
-  ParentFeature(super.ctx);
+  ParentFeature(super.featureContext);
 
   @override
   void onReceive(ParentAction action) => uiState = switch (action) {
@@ -162,7 +162,7 @@ final class ParentFeature extends Feature<ParentState, ParentAction, Never> {
 }
 
 final class ChildFeature extends Feature<ChildState, ChildAction, Notice> {
-  ChildFeature(super.ctx) : global = ctx.shared(globalCount);
+  ChildFeature(super.featureContext) : global = featureContext.shared(globalCount);
 
   final Shared<int> global;
   final List<ChildAction> received = [];
@@ -194,7 +194,7 @@ final class ChildFeature extends Feature<ChildState, ChildAction, Notice> {
 }
 
 final class GrandFeature extends Feature<GrandState, GrandAction, Never> {
-  GrandFeature(super.ctx);
+  GrandFeature(super.featureContext);
 
   @override
   void onReceive(GrandAction action) {}
@@ -202,7 +202,7 @@ final class GrandFeature extends Feature<GrandState, GrandAction, Never> {
 
 /// Writes go through [global] only. Writing back from State as well would loop Shared → State → Shared.
 final class MirrorFeature extends Feature<GrandState, GrandAction, Notice> {
-  MirrorFeature(super.ctx) : global = ctx.shared(globalCount) {
+  MirrorFeature(super.featureContext) : global = featureContext.shared(globalCount) {
     combineWith<int>(global, (s, v) {
       merges++;
       return GrandState(v);
@@ -307,7 +307,7 @@ abstract interface class SearchApi {
 }
 
 final class SearchFeature extends Feature<SearchState, SearchAction, Never> {
-  SearchFeature(super.ctx, {required this.api});
+  SearchFeature(super.featureContext, {required this.api});
   final SearchApi api;
   static const debounce = Duration(milliseconds: 300);
   int cleanups = 0;

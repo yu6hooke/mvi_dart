@@ -30,11 +30,11 @@ final class FeatureContext<S, A> {
 }
 
 abstract base class Feature<S, A, E> {
-  Feature(FeatureContext<S, A> ctx)
-    : cell = ctx.cell,
-      _upstream = ctx.upstream,
-      _onTaskAction = ctx.onTaskAction,
-      shared = ctx.shared;
+  Feature(FeatureContext<S, A> featureContext)
+    : cell = featureContext.cell,
+      _upstream = featureContext.upstream,
+      _onTaskAction = featureContext.onTaskAction,
+      shared = featureContext.shared;
 
   final StateCell<S> cell;
   final void Function(A) _upstream;

@@ -21,7 +21,7 @@ final todosLens = Lens<AppState, TodosState>(
 );
 
 final class AppFeature extends Feature<AppState, AppAction, Never> {
-  AppFeature(super.ctx);
+  AppFeature(super.featureContext);
 
   @override
   void onReceive(AppAction action) {

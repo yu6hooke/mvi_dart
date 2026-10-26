@@ -18,7 +18,7 @@ class TodosPage extends StatelessWidget {
   Widget build(BuildContext context) => context.feature<AppFeature>().scope(
     lens: todosLens,
     wrapAction: AppAction.todos,
-    create: (ctx) => TodosFeature(ctx, repo: context.read(todoRepositoryProvider)),
+    create: (featureContext) => TodosFeature(featureContext, repo: context.read(todoRepositoryProvider)),
     builder: (context, todos) => TodosView(todos),
   );
 }

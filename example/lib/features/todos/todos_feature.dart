@@ -6,7 +6,7 @@ import '../../shared/remaining_count.dart';
 import 'todos_contract.dart';
 
 final class TodosFeature extends Feature<TodosState, TodosAction, TodosEffect> {
-  TodosFeature(super.ctx, {required this.repo}) : _remaining = ctx.shared(remainingCount);
+  TodosFeature(super.featureContext, {required this.repo}) : _remaining = featureContext.shared(remainingCount);
 
   final TodoRepository repo;
   final Shared<int> _remaining;

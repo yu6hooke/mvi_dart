@@ -20,13 +20,18 @@ FeatureTester<SearchState, SearchAction, Never, SearchFeature> searchTester(
   FakeAsync fa,
   FakeApi api, {
   bool verifyOnTearDown = true,
-}) => FeatureTester(fa, const SearchState(), (ctx) => SearchFeature(ctx, api: api), verifyOnTearDown: verifyOnTearDown);
+}) => FeatureTester(
+  fa,
+  const SearchState(),
+  (featureContext) => SearchFeature(featureContext, api: api),
+  verifyOnTearDown: verifyOnTearDown,
+);
 
 SearchState loading(SearchState s, String q) => s.copyWith(query: q, loading: true);
 
 /// Sends from inside the reducer (re-entrancy) and records the processing order in State.
 final class Reentrant extends Feature<List<String>, String, Never> {
-  Reentrant(super.ctx);
+  Reentrant(super.featureContext);
   @override
   void onReceive(String action) {
     uiState = [...uiState, 'start $action'];

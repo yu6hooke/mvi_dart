@@ -1,7 +1,7 @@
 name: mvi_dart
 description: "Small MVI core for Flutter: root state with lens-projected child scopes, cancellable Tasks, microtask-ordered send. Depends on the Flutter SDK only."
 publish_to: none
-version: 0.1.0
+version: 0.2.0
 
 environment:
   sdk: ^3.13.0
