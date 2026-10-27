@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pub
+    directories:
+      - /packages/mvi_dart
+      - /packages/mvi_dart_test
+      - /example
+    schedule:
+      interval: monthly
+    groups:
+      pub:
+        patterns: ["*"]

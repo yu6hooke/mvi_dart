@@ -11,13 +11,28 @@ permissions:
 
 jobs:
   test:
+    name: test (${{ matrix.flutter }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # minimum: the lower bound declared in packages/mvi_dart/pubspec.yaml
+        # pinned: the development version in .tool-versions
+        flutter: [minimum, pinned]
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Read Flutter version from .tool-versions
+      - name: Resolve Flutter version
         id: flutter-version
-        run: echo "version=$(grep flutter .tool-versions | cut -d' ' -f2 | sed 's/-stable//')" >> $GITHUB_OUTPUT
+        env:
+          TARGET: ${{ matrix.flutter }}
+        run: |
+          case "$TARGET" in
+            minimum) version=$(sed -n 's/^  flutter: ">=\(.*\)"$/\1/p' packages/mvi_dart/pubspec.yaml) ;;
+            pinned) version=$(grep flutter .tool-versions | cut -d' ' -f2 | sed 's/-stable//') ;;
+          esac
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
@@ -31,8 +46,10 @@ jobs:
             (cd $d && flutter pub get)
           done
 
-      # page_width lives in each package's analysis_options, which needs resolved dependencies
+      # page_width lives in each package's analysis_options, which needs resolved dependencies.
+      # Formatter output can change between Dart versions, so only the pinned version checks it.
       - name: Check formatting
+        if: matrix.flutter == 'pinned'
         run: dart format --set-exit-if-changed $(git ls-files '*.dart')
 
       - name: mvi_dart_test
