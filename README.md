@@ -41,7 +41,7 @@ Use the full commit hash, not a tag or branch name. `mvi_dart_test` depends on `
 A feature owns a piece of state and handles actions for it.
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mvi_dart/mvi_dart.dart';
 
 sealed class CounterAction {

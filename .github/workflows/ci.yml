@@ -18,6 +18,7 @@ jobs:
       matrix:
         # minimum: the lower bound declared in packages/mvi_dart/pubspec.yaml
         # pinned: the development version in .tool-versions
+        # The example targets the pinned version only, so minimum skips it.
         flutter: [minimum, pinned]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -41,8 +42,12 @@ jobs:
           cache: true
 
       - name: Resolve dependencies
+        env:
+          TARGET: ${{ matrix.flutter }}
         run: |
-          for d in packages/mvi_dart_test packages/mvi_dart example; do
+          dirs="packages/mvi_dart_test packages/mvi_dart"
+          if [ "$TARGET" = pinned ]; then dirs="$dirs example"; fi
+          for d in $dirs; do
             (cd $d && flutter pub get)
           done
 
@@ -61,5 +66,6 @@ jobs:
         run: flutter analyze && flutter test
 
       - name: example
+        if: matrix.flutter == 'pinned'
         working-directory: example
         run: dart run build_runner build && flutter analyze && flutter test

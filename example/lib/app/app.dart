@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mvi_dart/mvi_dart.dart';
 
 import '../features/todos/todos_page.dart';
